@@ -18,7 +18,6 @@ class FAQ_Accordion {
     public function enqueue_scripts() {
         if (!is_singular()) return;
 
-        // بارگذاری CSS داینامیک بر اساس تنظیمات
         $opts = get_option($this->option_name, array());
 
         $custom_css = "
@@ -87,9 +86,11 @@ class FAQ_Accordion {
         );
     }
 
-    // ثبت تنظیمات
+    // ثبت تنظیمات به همراه sanitize_callback
     public function register_settings() {
-        register_setting('faq_accordion_group', $this->option_name);
+        register_setting('faq_accordion_group', $this->option_name, [
+            'sanitize_callback' => [$this, 'sanitize_settings']
+        ]);
 
         add_settings_section(
             'faq_accordion_main_section',
@@ -171,6 +172,45 @@ class FAQ_Accordion {
         );
     }
 
+    // تابع sanitize برای پاکسازی ورودی‌ها
+    public function sanitize_settings($input) {
+        $output = [];
+
+        if (isset($input['question_bg_color'])) {
+            $output['question_bg_color'] = sanitize_hex_color($input['question_bg_color']);
+        }
+
+        if (isset($input['question_text_color'])) {
+            $output['question_text_color'] = sanitize_hex_color($input['question_text_color']);
+        }
+
+        if (isset($input['question_font_size'])) {
+            $output['question_font_size'] = intval($input['question_font_size']);
+        }
+
+        if (isset($input['answer_bg_color'])) {
+            $output['answer_bg_color'] = sanitize_hex_color($input['answer_bg_color']);
+        }
+
+        if (isset($input['answer_text_color'])) {
+            $output['answer_text_color'] = sanitize_hex_color($input['answer_text_color']);
+        }
+
+        if (isset($input['question_padding'])) {
+            $output['question_padding'] = intval($input['question_padding']);
+        }
+
+        if (isset($input['question_font_family'])) {
+            $output['question_font_family'] = sanitize_text_field($input['question_font_family']);
+        }
+
+        if (isset($input['answer_font_family'])) {
+            $output['answer_font_family'] = sanitize_text_field($input['answer_font_family']);
+        }
+
+        return $output;
+    }
+
     // صفحه تنظیمات HTML
     public function settings_page_html() {
         if (!current_user_can('manage_options')) {
@@ -195,7 +235,6 @@ class FAQ_Accordion {
         $options = get_option($this->option_name);
         $value = isset($options[$args['label_for']]) ? esc_attr($options[$args['label_for']]) : '';
         echo '<input type="text" id="'.esc_attr($args['label_for']).'" name="'.esc_attr($this->option_name).'['.esc_attr($args['label_for']).']" value="'.esc_attr($value).'" class="faq-color-field" />';
-        // بارگذاری jQuery color picker با js جداگانه می‌گذاریم
         $this->enqueue_color_picker();
     }
 
@@ -218,6 +257,10 @@ class FAQ_Accordion {
         static $loaded = false;
         if ($loaded) return;
         $loaded = true;
+        
+        wp_register_style('faq-accordion-style', false, array(), '1.0');
+        wp_enqueue_style('faq-accordion-style');
+        wp_add_inline_style('faq-accordion-style', $custom_css);
 
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('wp-color-picker');

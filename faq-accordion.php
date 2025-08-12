@@ -1,6 +1,7 @@
 <?php
 /*
 Plugin Name: FAQ Accordion from RankMath Schema
+Plugin URI:  https://github.com/amir-soly/faq-accordion-rankmath
 Description: نمایش FAQ رنک مث به صورت آکوردیون با تنظیمات سفارشی استایل در پنل مدیریت.
 Version:     1.0
 Author:      amir soli

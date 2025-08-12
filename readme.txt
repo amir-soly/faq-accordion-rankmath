@@ -1,8 +1,8 @@
 === FAQ Accordion from RankMath Schema ===
-Contributors: yourusername
-Tags: faq, accordion, rank math, seo, schema, rich snippets
+Contributors: amirsoli
+Tags: faq, accordion, rank math, seo, schema
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.8
 Stable tag: 1.0
 Requires PHP: 7.0
 License: GPLv2 or later
